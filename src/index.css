@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(148, 163, 184, 0.12);
+  --accent-cyan: #22d3ee;
+  --accent-violet: #a78bfa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+body {
+  @apply bg-slate-950 text-slate-200 antialiased;
+  margin: 0;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(167, 139, 250, 0.06), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 50%, rgba(34, 211, 238, 0.04), transparent);
+}
+
+/* Glass panel */
+.glass-panel {
+  @apply rounded-2xl border border-slate-700/50;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 41, 59, 0.4) 100%);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* React Flow overrides for dark glass theme */
+.react-flow__background {
+  background: transparent !important;
+}
+.react-flow__minimap {
+  @apply rounded-xl border border-slate-700/50 bg-slate-900/80 backdrop-blur-xl;
+}
+.react-flow__controls {
+  @apply rounded-xl overflow-hidden border border-slate-700/50;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+.react-flow__controls-button {
+  @apply bg-slate-800/90 text-slate-300 border-b border-slate-700/50 hover:bg-slate-700/90 hover:text-cyan-400;
+}
+.react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+.react-flow__edge-path {
+  stroke: rgba(148, 163, 184, 0.4);
+}
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--accent-cyan);
+}
