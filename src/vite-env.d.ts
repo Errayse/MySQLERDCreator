@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ElectronAPI {
-  openSqlFile: () => Promise<{ filePath: string; content: string } | null>
+  openSqlFile: () => Promise<{ filePath: string; blocks: string[]; primaryKeys: Record<string, string[]> } | null>
 }
 
 declare global {

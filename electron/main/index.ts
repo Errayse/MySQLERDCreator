@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { extractCreateTableBlocks, getPrimaryKeysFromAlter } from '../../src/services/sqlExtract'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -53,7 +54,9 @@ ipcMain.handle('dialog:openSqlFile', async () => {
   if (result.canceled || result.filePaths.length === 0) return null
   const filePath = result.filePaths[0]
   const content = await readFile(filePath, 'utf-8')
-  return { filePath, content }
+  const blocks = extractCreateTableBlocks(content)
+  const primaryKeys = getPrimaryKeysFromAlter(content)
+  return { filePath, blocks, primaryKeys }
 })
 
 app.whenReady().then(createWindow)

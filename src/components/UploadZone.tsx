@@ -4,10 +4,11 @@ import { FileCode, Upload } from 'lucide-react'
 
 interface UploadZoneProps {
   onFileSelect: (content: string, fileName: string) => void
-  onOpenDialog?: () => Promise<{ filePath: string; content: string } | null>
+  onDialogResult?: (result: { filePath: string; blocks: string[]; primaryKeys: Record<string, string[]> }) => void
+  onOpenDialog?: () => Promise<{ filePath: string; blocks: string[]; primaryKeys: Record<string, string[]> } | null>
 }
 
-export function UploadZone({ onFileSelect, onOpenDialog }: UploadZoneProps) {
+export function UploadZone({ onFileSelect, onDialogResult, onOpenDialog }: UploadZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDrop = useCallback(
@@ -41,13 +42,13 @@ export function UploadZone({ onFileSelect, onOpenDialog }: UploadZoneProps) {
   )
 
   const handleUploadClick = useCallback(async () => {
-    if (onOpenDialog && typeof window !== 'undefined' && window.electronAPI?.openSqlFile) {
+    if (onOpenDialog && onDialogResult && typeof window !== 'undefined' && window.electronAPI?.openSqlFile) {
       const result = await onOpenDialog()
-      if (result) onFileSelect(result.content, result.filePath)
+      if (result) onDialogResult(result)
     } else {
       fileInputRef.current?.click()
     }
-  }, [onOpenDialog, onFileSelect])
+  }, [onOpenDialog, onDialogResult, onFileSelect])
 
   return (
     <motion.div

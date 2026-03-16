@@ -146,7 +146,7 @@ export function ErdCanvas({ schema, relations, variant }: ErdCanvasProps) {
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
-        fitViewOptions={{ padding: 0.25, maxZoom: 1 }}
+        fitViewOptions={{ padding: 0.35, maxZoom: 1, minZoom: 0.2 }}
         className="bg-slate-950/20"
         proOptions={{ hideAttribution: true }}
       >

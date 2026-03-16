@@ -7,7 +7,7 @@ import { Tabs } from '@/components/Tabs'
 import { ErdCanvas } from '@/components/ErdCanvas'
 
 function AppContent() {
-  const { schema, relations, fileName, error, loadFromSql, clear } = useSchemaStore()
+  const { schema, relations, fileName, error, loadFromSql, loadFromBlocks, clear } = useSchemaStore()
   const [activeTab, setActiveTab] = useState<'physical' | 'logical'>('physical')
 
   const handleFileSelect = useCallback(
@@ -15,6 +15,14 @@ function AppContent() {
       loadFromSql(content, name)
     },
     [loadFromSql]
+  )
+
+  const handleDialogResult = useCallback(
+    (result: { filePath: string; blocks: string[]; primaryKeys: Record<string, string[]> }) => {
+      const name = result.filePath.split(/[/\\]/).pop() ?? result.filePath
+      loadFromBlocks(result.blocks, name, result.primaryKeys)
+    },
+    [loadFromBlocks]
   )
 
   const openDialog = useCallback(() => {
@@ -90,7 +98,7 @@ function AppContent() {
               exit={{ opacity: 0 }}
               className="flex-1 flex items-center justify-center"
             >
-              <UploadZone onFileSelect={handleFileSelect} onOpenDialog={openDialog} />
+              <UploadZone onFileSelect={handleFileSelect} onDialogResult={handleDialogResult} onOpenDialog={openDialog} />
             </motion.div>
           )}
         </AnimatePresence>

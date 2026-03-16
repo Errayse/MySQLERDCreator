@@ -1,7 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  openSqlFile: () => ipcRenderer.invoke('dialog:openSqlFile') as Promise<{ filePath: string; content: string } | null>,
+  openSqlFile: () => ipcRenderer.invoke('dialog:openSqlFile') as Promise<{ filePath: string; blocks: string[]; primaryKeys: Record<string, string[]> } | null>,
 })
 
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { ParsedSchema, Relation } from '@/types/schema'
-import { parseSqlToSchema, extractRelations } from '@/services/sqlParser'
+import { parseSqlToSchema, parseSqlFromBlocks, extractRelations, applyPrimaryKeysFromAlter } from '@/services/sqlParser'
 
 interface SchemaState {
   schema: ParsedSchema
@@ -11,6 +11,7 @@ interface SchemaState {
 
 interface SchemaStoreValue extends SchemaState {
   loadFromSql: (sql: string, fileName?: string) => void
+  loadFromBlocks: (blocks: string[], fileName?: string, primaryKeys?: Record<string, string[]>) => void
   clear: () => void
   isEmpty: boolean
 }
@@ -48,16 +49,41 @@ export function SchemaProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const loadFromBlocks = useCallback((blocks: string[], fileName?: string, primaryKeys?: Record<string, string[]>) => {
+    try {
+      const schema = parseSqlFromBlocks(blocks)
+      if (primaryKeys && Object.keys(primaryKeys).length > 0) {
+        applyPrimaryKeysFromAlter(schema, primaryKeys)
+      }
+      const relations = extractRelations(schema)
+      setState({
+        schema,
+        relations,
+        fileName: fileName ?? null,
+        error: schema.length === 0 ? 'В файле не найдено ни одной таблицы (нужны команды CREATE TABLE).' : null,
+      })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка разбора SQL'
+      setState({
+        schema: [],
+        relations: [],
+        fileName: fileName ?? null,
+        error: `Ошибка парсинга: ${message}`,
+      })
+    }
+  }, [])
+
   const clear = useCallback(() => setState(initialState), [])
 
   const value = useMemo<SchemaStoreValue>(
     () => ({
       ...state,
       loadFromSql,
+      loadFromBlocks,
       clear,
       isEmpty: state.schema.length === 0,
     }),
-    [state, loadFromSql, clear]
+    [state, loadFromSql, loadFromBlocks, clear]
   )
 
   return <SchemaContext.Provider value={value}>{children}</SchemaContext.Provider>
