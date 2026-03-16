@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ReactFlow,
   Background,
@@ -118,8 +118,17 @@ export function ErdCanvas({ schema, relations, variant }: ErdCanvasProps) {
     return getLayoutedElements(nodes, edges)
   }, [schema, relations, physical])
 
-  const [nodes, , onNodesChange] = useNodesState(layoutedNodes)
+  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges)
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: { ...n.data, isPhysical: physical },
+      }))
+    )
+  }, [physical, setNodes])
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
