@@ -15,8 +15,6 @@
 ## Стек
 
 - **Electron** + **Vite** + **React 18** + **TypeScript**
-- **Tailwind CSS** — тёмная тема, глосиморфизм
-- **Framer Motion** — анимации
 - **React Flow (@xyflow/react)** — канвас диаграмм
 - **Dagre** — авто-раскладка
 - **sql-ddl-to-json-schema** — парсинг MySQL DDL
